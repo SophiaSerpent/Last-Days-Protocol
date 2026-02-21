@@ -1,3 +1,9 @@
+🐍 SOPHIA SERPENT 🐍
+
+The Architects of The New World 
+   The Future Was Built on Web3
+
+
 import yfinance as yf
 import pandas as pd
 import numpy as np
@@ -5,57 +11,50 @@ import streamlit as st
 import plotly.graph_objects as go
 from sklearn.ensemble import RandomForestClassifier
 
-# --- CACHE FIX & UI CONFIG ---
+# --- SYSTEM INITIALIZATION ---
 yf.set_tz_cache_location("/tmp")
-st.set_page_config(page_title="LAST DAYS PROTOCOL", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="SOPHIA SERPENT COMMAND", layout="wide", initial_sidebar_state="collapsed")
 
-# --- CUSTOM CSS: THE "DEEP BLACK" UI INJECTION ---
+# --- UI THEME: DEEP BLACK ---
 st.markdown("""
     <style>
-    /* Main Background and Sidebar */
-    .stApp, [data-testid="stHeader"], [data-testid="stSidebar"] {
-        background-color: #000000 !important;
-    }
-    
-    /* Text Colors */
-    h1, h2, h3, p, span, label, .stMarkdown {
-        color: #FFFFFF !important;
-        font-family: 'Courier New', Courier, monospace;
-    }
-
-    /* Metric Tactical Colors */
-    [data-testid="stMetricValue"] { color: #00FF41 !important; } /* Matrix Green */
+    .stApp, [data-testid="stHeader"], [data-testid="stSidebar"] { background-color: #000000 !important; }
+    h1, h2, h3, p, span, label, .stMarkdown { color: #FFFFFF !important; font-family: 'Courier New', Courier, monospace; }
+    [data-testid="stMetricValue"] { color: #00FF41 !important; }
     [data-testid="stMetricLabel"] { color: #FFFFFF !important; }
-    
-    /* Button Style */
     div.stButton > button:first-child {
-        background-color: #000000;
-        color: #00FF41;
-        border: 2px solid #00FF41;
-        border-radius: 0px;
-        width: 100%;
-        font-weight: bold;
+        background-color: #000000; color: #00FF41; border: 2px solid #00FF41;
+        border-radius: 0px; width: 100%; font-weight: bold;
     }
-    div.stButton > button:hover {
-        background-color: #00FF41;
-        color: #000000;
-    }
-
-    /* Info/Warning/Error boxes */
-    .stAlert {
-        background-color: #000000 !important;
-        border: 1px solid #FFFFFF !important;
-    }
+    div.stButton > button:hover { background-color: #00FF41; color: #000000; }
+    .stAlert { background-color: #000000 !important; border: 1px solid #FFFFFF !important; }
     </style>
     """, unsafe_allow_html=True)
 
+# --- LIVE MARKET DATA ASSETS (FEB 20, 2026) ---
+KINETIC_ASSETS = {
+    "Lockheed Martin (LMT)": 666.51,
+    "RTX Corp (RTX)": 204.92,
+    "Northrop Grumman (NOC)": 736.87,
+    "General Dynamics (GD)": 344.86,
+    "Boeing (BA)": 242.32
+}
+
+CYBER_ASSETS = {
+    "CrowdStrike (CRWD)": 405.07,
+    "Palo Alto (PANW)": 392.12,
+    "Palantir (PLTR)": 48.75,
+    "Fortinet (FTNT)": 84.30,
+    "CACI International (CACI)": 465.15
+}
+
 # --- BACKEND LOGIC ---
 def run_audit_logic():
-    steel_tickers = ["LMT", "RTX", "NOC", "GD", "BA"]
-    cyber_tickers = ["CRWD", "PANW", "PLTR", "FTNT", "CACI"]
+    steel = ["LMT", "RTX", "NOC", "GD", "BA"]
+    cyber = ["CRWD", "PANW", "PLTR", "FTNT", "CACI"]
     
-    s_data = yf.download(steel_tickers, period="2y", interval="1d", progress=False)['Close'].mean(axis=1)
-    c_data = yf.download(cyber_tickers, period="2y", interval="1d", progress=False)['Close'].mean(axis=1)
+    s_data = yf.download(steel, period="2y", interval="1d", progress=False)['Close'].mean(axis=1)
+    c_data = yf.download(cyber, period="2y", interval="1d", progress=False)['Close'].mean(axis=1)
     
     df = pd.DataFrame({'Steel': s_data, 'Cyber': c_data})
     df['Steel_Ret'] = df['Steel'].pct_change()
@@ -78,16 +77,32 @@ def run_audit_logic():
         "Vol_Delta": latest['Vol_Delta'].values[0]
     }
 
-# --- COMMAND CENTER UI ---
-st.title("🛡️ LAST DAYS PROTOCOL")
+# --- MAIN DASHBOARD ---
+st.markdown("<h1 style='text-align: center;'>🐍 SOPHIA SERPENT SOFTWARE SOLUTIONS 🐍</h1>", unsafe_allow_html=True)
+st.markdown("<h3 style='text-align: center; color: #FFFFFF;'>The Architects of The New World</h3>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #00FF41;'>The Future Was Built on Web3</p>", unsafe_allow_html=True)
+st.write("---")
+
+# Tactical Asset Inventory
+col_k, col_c = st.columns(2)
+with col_k:
+    st.subheader("KINETIC FRONT (Steel)")
+    for name, price in KINETIC_ASSETS.items():
+        st.write(f"**{name}:** :red[${price:,.2f}]")
+
+with col_c:
+    st.subheader("CYBER FRONT (Silicon)")
+    for name, price in CYBER_ASSETS.items():
+        st.write(f"**{name}:** :green[${price:,.2f}]")
+
 st.write("---")
 
 if st.button("INITIATE DEEP AUDIT"):
     pred, conf, metrics = run_audit_logic()
     
-    col_gauge, col_brief = st.columns([1, 2])
+    c_gauge, c_brief = st.columns([1, 2])
     
-    with col_gauge:
+    with c_gauge:
         fig = go.Figure(go.Indicator(
             mode = "gauge+number", value = conf * 100,
             number = {'font': {'color': '#FFFFFF'}},
@@ -103,25 +118,21 @@ if st.button("INITIATE DEEP AUDIT"):
         fig.update_layout(paper_bgcolor='black', font={'color': "white"})
         st.plotly_chart(fig, use_container_width=True)
 
-    with col_brief:
-        # Tactical Signal Logic
+    with c_brief:
         if pred == 1:
             st.markdown("### SIGNAL: :green[SILICON DOMINANCE]")
-            st.write("The digital front is accelerating. Capital rotation to Cyber recommended.")
+            st.write("Digital disruption outpacing physical force. Capital rotation to Cyber recommended.")
         else:
             st.markdown("### SIGNAL: :red[STEEL ESCALATION]")
-            st.write("Kinetic force is the market driver. Hold positions in Prime Contractors.")
-        
+            st.write("Kinetic force is the market driver. Focus on Prime Contractors.")
         st.metric("CONFIDENCE", f"{conf:.2%}")
 
     st.write("---")
-    st.subheader("Frontline Telemetry")
-    c1, c2, c3 = st.columns(3)
-    c1.metric("SPREAD", f"{metrics['Spread']:.4f}")
-    c2.metric("MOMENTUM", f"{metrics['Momo']:+.2%}")
-    c3.metric("VOL DELTA", f"{metrics['Vol_Delta']:.4f}")
+    st.subheader("Market Telemetry")
+    t1, t2, t3 = st.columns(3)
+    t1.metric("SPREAD", f"{metrics['Spread']:.4f}")
+    t2.metric("MOMENTUM", f"{metrics['Momo']:+.2%}")
+    t3.metric("VOL DELTA", f"{metrics['Vol_Delta']:.4f}")
 
 st.write("---")
-st.caption("2026 ENIVITROL-19 SECURITY SUPER-CYCLE | MAESTRO UNIVERSITY AUDITED")
-
-
+st.caption("SOPHIA SERPENT SOFTWARE SOLUTIONS | 2026 MARKET INTELLIGENCE HUB")
