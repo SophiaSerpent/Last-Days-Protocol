@@ -9,6 +9,7 @@ import numpy as np
 import streamlit as st
 import plotly.graph_objects as go
 from sklearn.ensemble import RandomForestClassifier
+from datetime import datetime
 
 # --- SYSTEM INITIALIZATION ---
 yf.set_tz_cache_location("/tmp")
