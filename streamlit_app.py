@@ -1,7 +1,6 @@
-🐍 SOPHIA SERPENT 🐍
-
-The Architects of The New World 
-   The Future Was Built on Web3
+#         SOPHIA SERPENT 
+#  The Architects of The New World 
+#   The Future Was Built on Web3
 
 
 import yfinance as yf
