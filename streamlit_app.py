@@ -1,6 +1,6 @@
 
-import appdirs as ad
-ad.user_cache_dir = lambda *args: "/tmp"
+import os
+import yfinance as yf
 
 import yfinance as yf
 import pandas as pd
