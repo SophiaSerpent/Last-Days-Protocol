@@ -1,7 +1,3 @@
-#Sophia Serpent Software Solutions
-#Author: The Architects of The New World : Michael J Scott, Sophia Serpent 
-
-import os
 import yfinance as yf
 import pandas as pd
 import numpy as np
@@ -9,9 +5,51 @@ import streamlit as st
 import plotly.graph_objects as go
 from sklearn.ensemble import RandomForestClassifier
 
-# --- CACHE FIX ---
+# --- CACHE FIX & UI CONFIG ---
 yf.set_tz_cache_location("/tmp")
+st.set_page_config(page_title="LAST DAYS PROTOCOL", layout="wide", initial_sidebar_state="collapsed")
 
+# --- CUSTOM CSS: THE "DEEP BLACK" UI INJECTION ---
+st.markdown("""
+    <style>
+    /* Main Background and Sidebar */
+    .stApp, [data-testid="stHeader"], [data-testid="stSidebar"] {
+        background-color: #000000 !important;
+    }
+    
+    /* Text Colors */
+    h1, h2, h3, p, span, label, .stMarkdown {
+        color: #FFFFFF !important;
+        font-family: 'Courier New', Courier, monospace;
+    }
+
+    /* Metric Tactical Colors */
+    [data-testid="stMetricValue"] { color: #00FF41 !important; } /* Matrix Green */
+    [data-testid="stMetricLabel"] { color: #FFFFFF !important; }
+    
+    /* Button Style */
+    div.stButton > button:first-child {
+        background-color: #000000;
+        color: #00FF41;
+        border: 2px solid #00FF41;
+        border-radius: 0px;
+        width: 100%;
+        font-weight: bold;
+    }
+    div.stButton > button:hover {
+        background-color: #00FF41;
+        color: #000000;
+    }
+
+    /* Info/Warning/Error boxes */
+    .stAlert {
+        background-color: #000000 !important;
+        border: 1px solid #FFFFFF !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+# --- BACKEND LOGIC ---
 def run_audit_logic():
     steel_tickers = ["LMT", "RTX", "NOC", "GD", "BA"]
     cyber_tickers = ["CRWD", "PANW", "PLTR", "FTNT", "CACI"]
@@ -30,73 +68,60 @@ def run_audit_logic():
 
     X = df[['Spread', 'Momo', 'Vol_Delta']]
     y = df['Target']
-    
     model = RandomForestClassifier(n_estimators=100, random_state=1111)
     model.fit(X, y)
 
     latest = X.tail(1)
-    prediction = model.predict(latest)[0]
-    confidence = model.predict_proba(latest).max()
-    
-    # Extract feature values for the UI
-    current_metrics = {
+    return model.predict(latest)[0], model.predict_proba(latest).max(), {
         "Spread": latest['Spread'].values[0],
         "Momo": latest['Momo'].values[0],
         "Vol_Delta": latest['Vol_Delta'].values[0]
     }
-    
-    return prediction, confidence, current_metrics
 
-# --- UI LAYER ---
-st.set_page_config(page_title="LAST DAYS PROTOCOL", layout="wide")
-st.title("🛡️ LAST DAYS PROTOCOL: COMMAND CENTER")
+# --- COMMAND CENTER UI ---
+st.title("🛡️ LAST DAYS PROTOCOL")
+st.write("---")
 
-if st.button("EXECUTE DEEP AUDIT"):
+if st.button("INITIATE DEEP AUDIT"):
     pred, conf, metrics = run_audit_logic()
     
-    col_gauge, col_briefing = st.columns([1, 2])
-
+    col_gauge, col_brief = st.columns([1, 2])
+    
     with col_gauge:
         fig = go.Figure(go.Indicator(
             mode = "gauge+number", value = conf * 100,
-            title = {'text': "Confidence %"},
-            gauge = {'bar': {'color': "#00ff41"}, 'axis': {'range': [0, 100]}}))
+            number = {'font': {'color': '#FFFFFF'}},
+            gauge = {
+                'axis': {'range': [0, 100], 'tickcolor': "#FFFFFF"},
+                'bar': {'color': "#00FF41"},
+                'bgcolor': "#111111",
+                'steps': [
+                    {'range': [0, 50], 'color': "#330000"},
+                    {'range': [50, 75], 'color': "#333300"},
+                    {'range': [75, 100], 'color': "#003300"}]}
+        ))
+        fig.update_layout(paper_bgcolor='black', font={'color': "white"})
         st.plotly_chart(fig, use_container_width=True)
-        
-    with col_briefing:
-        st.subheader("Tactical Briefing")
-        status = "SILICON (Cyber)" if pred == 1 else "STEEL (Kinetic)"
-        st.metric("CURRENT DOMINANT FRONT", status)
-        
+
+    with col_brief:
+        # Tactical Signal Logic
         if pred == 1:
-            st.warning("Digital disruption is outpacing physical force. Focus: Cybersecurity & AI.")
+            st.markdown("### SIGNAL: :green[SILICON DOMINANCE]")
+            st.write("The digital front is accelerating. Capital rotation to Cyber recommended.")
         else:
-            st.error("Kinetic escalation detected. Focus: Prime Contractors & Hardware.")
+            st.markdown("### SIGNAL: :red[STEEL ESCALATION]")
+            st.write("Kinetic force is the market driver. Hold positions in Prime Contractors.")
+        
+        st.metric("CONFIDENCE", f"{conf:.2%}")
 
-    st.divider()
-
-    # --- THE CONTEXT PANEL ---
-    st.subheader("Metric Intelligence Breakdown")
+    st.write("---")
+    st.subheader("Frontline Telemetry")
     c1, c2, c3 = st.columns(3)
-    
-    with c1:
-        st.write("**Relative Strength (Spread)**")
-        st.info(f"Current: {metrics['Spread']:.4f}")
-        st.caption("Ratio of Cyber vs. Steel price. A rising number indicates the market favors code over metal.")
-        
-    with c2:
-        st.write("**Trend Velocity (Momentum)**")
-        st.info(f"{metrics['Momo']:+.2%}")
-        st.caption("5-day speed of the rotation. Positive momentum confirms a shift toward Silicon.")
-        
-    with c3:
-        st.write("**Risk Imbalance (Vol Delta)**")
-        st.info(f"{metrics['Vol_Delta']:.4f}")
-        st.caption("Difference in sector jitteriness. High delta in Silicon suggests an impending move.")
+    c1.metric("SPREAD", f"{metrics['Spread']:.4f}")
+    c2.metric("MOMENTUM", f"{metrics['Momo']:+.2%}")
+    c3.metric("VOL DELTA", f"{metrics['Vol_Delta']:.4f}")
 
-    st.divider()
-    st.write("### 📜 GEOPOLITICAL STATE AUDIT")
-    if pred == 1:
-        st.write("> **2026 Context:** The conflict has moved to the shadows. Infrastructure protection and data-fusion are the primary value drivers.")
-    else:
-        st.write("> **2026 Context:** Territorial integrity and physical deterrence are prioritized. Supply chains for munitions and vehicles are under stress.")
+st.write("---")
+st.caption("2026 ENIVITROL-19 SECURITY SUPER-CYCLE | MAESTRO UNIVERSITY AUDITED")
+
+
