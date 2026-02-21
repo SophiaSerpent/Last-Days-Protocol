@@ -98,7 +98,8 @@ st.write("---")
 
 if st.button("INITIATE DEEP AUDIT"):
     pred, conf, metrics = run_audit_logic()
-    
+    st.write(f"Audit Timestamp: {datetime.now().strftime('%H:%M:%S')}")
+     
     c_gauge, c_brief = st.columns([1, 2])
     
     with c_gauge:
