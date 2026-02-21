@@ -1,6 +1,6 @@
-// Sophia Serpent Software Solutions
-Author: The Architects of The New World : Michael J Scott, Sophia Serpent 
-//
+#Sophia Serpent Software Solutions
+#Author: The Architects of The New World : Michael J Scott, Sophia Serpent 
+
 import os
 import yfinance as yf
 import pandas as pd
